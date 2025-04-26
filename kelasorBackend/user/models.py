@@ -6,7 +6,9 @@ from datetime import timedelta
 STATUS_CHOICES=[('male', 'Male'), ('female', 'Female')]
 ROLE_CHOICES = (
         ('student', 'Student'),
-        ('support', 'Support'),
+        ('support1', 'Support1'),
+        ('support2', 'Support2'),
+        ('support3', 'Support3'),
         ('superuser', 'Superuser'),
         ('teacher', 'Teacher'),
     )

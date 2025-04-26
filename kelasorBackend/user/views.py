@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDe
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from user.models import User, OTP
 from user.serializers import UserSerializer, UserProfileSerializer, UserListSerializer, SendOTPSerializer, VerifyOTPSerializer
-from user.permissions import IsSuperUser, IsSupport
+from user.permissions import IsSuperUser, IsSupport1
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 import random
@@ -26,8 +26,13 @@ class UserListView(ListAPIView):
     filterset_fields = ['last_name', 'first_name', 'role', 'is_active']
     search_fields = ['role']
     
-class CreateUserView(CreateAPIView):
+class CreateSupportUserView(CreateAPIView):
     permission_classes = [IsSuperUser and IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class CreateNormalUserView(CreateAPIView):
+    permission_classes = [AllowAny]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -50,7 +55,7 @@ class SendOTPView(APIView):
         OTP.objects.create(phone=phone, code=code)
 
         api = KavenegarAPI('484C7571326A3573413549737736714853344858424A39364F6A4B5A724F70594C38396C6F5755517262593D')
-        params = { 'sender' : '2000660110', 'receptor': phone, 'message' :code }
+        params = { 'sender' : '2000660110', 'receptor': phone, 'message' :f"کد تایید شما : {code}" }
         api.sms_send(params)
 
         return Response({"detail": "کد تأیید ارسال شد."})
