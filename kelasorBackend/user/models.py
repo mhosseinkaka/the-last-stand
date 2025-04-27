@@ -1,14 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 from django.utils import timezone
 from datetime import timedelta
 
 STATUS_CHOICES=[('male', 'Male'), ('female', 'Female')]
 ROLE_CHOICES = (
         ('student', 'Student'),
-        ('support1', 'Support1'),
-        ('support2', 'Support2'),
-        ('support3', 'Support3'),
+        ('support', 'Support'),
         ('superuser', 'Superuser'),
         ('teacher', 'Teacher'),
     )
