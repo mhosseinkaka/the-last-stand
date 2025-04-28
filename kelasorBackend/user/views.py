@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from user.models import User, OTP
-from user.serializers import UserSerializer, UserProfileSerializer, UserListSerializer, SendOTPSerializer, VerifyOTPSerializer
+from user.serializers import UserSerializer, UserProfileSerializer, UserListSerializer, SendOTPSerializer, VerifyOTPSerializer, LoginSerializer, SetPasswordSerializer
+from django.contrib.auth import authenticate
 from user.permissions import IsSuperUser, IsSupportUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -14,7 +15,8 @@ from datetime import timedelta
 from rest_framework_simplejwt.tokens import RefreshToken
 from kavenegar import *
 from django.contrib.auth.models import Group
-
+from sms_ir import *
+import http.client
 
 
 # Create your views here.
@@ -68,11 +70,21 @@ class SendOTPView(APIView):
         code = str(random.randint(100000, 999999))
         OTP.objects.create(phone=phone, code=code)
         try:
-            api = KavenegarAPI('484C7571326A3573413549737736714853344858424A39364F6A4B5A724F70594C38396C6F5755517262593D')
-            params = { 'sender' : '2000660110', 'receptor': phone, 'message' :f"کد تایید شما : {code}" }
-            api.sms_send(params)
+            conn = http.client.HTTPSConnection("api.sms.ir")
+            payload = json.dumps({
+                                "lineNumber": 30002108001178,
+                                "messageText": f"سلام، کد تأیید شما: {code}",
+                                "mobiles": [phone],      
+                                })
+            headers = {
+                'X-API-KEY': 'NU2KTjsAbrhPcG2EHfWKlfCDWgdcrehTRUJFJZnhOoFiaIWG',
+                'Content-Type': 'application/json'}
+            conn.request("POST", "/v1/send/bulk", payload, headers)
+            res = conn.getresponse()
+            data = res.read()
+            print(data.decode("utf-8"))
         except (APIException, HTTPException) as e:
-            print("Kavenegar error:", e)
+            print("sms.ir error:", e)
             return Response({"detail": "ارسال پیامک با مشکل مواجه شد."}, status=400)
 
         return Response({"detail": "کد تأیید ارسال شد."})
@@ -96,8 +108,8 @@ class VerifyOTPView(APIView):
                 student_group = Group.objects.get(name='Students')
                 user.groups.add(student_group)
             except Group.DoesNotExist:
-                return Response({"detail": "گروه Students پیدا نشد. لطفاً ابتدا گروه را بسازید."},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"detail": "404 not found!!!"},
+                                status=status.HTTP_404_NOT_FOUND)
         
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -105,3 +117,32 @@ class VerifyOTPView(APIView):
             'refresh': str(refresh),
             'is_new_user': created
         })
+    
+class PasswordLoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        phone = serializer.validated_data['phone']
+        password = serializer.validated_data['password']
+
+        user = authenticate(request, phone=phone, password=password)
+        if user is not None:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+            })
+        else:
+            return Response({'detail': 'Phone number or password is incorrect.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class SetPasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = SetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(user=request.user)
+
+        return Response({"detail": "Password set successfully."}, status=200)

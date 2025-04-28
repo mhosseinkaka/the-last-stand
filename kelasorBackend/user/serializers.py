@@ -29,9 +29,27 @@ class UserListSerializer(ModelSerializer):
         read_only_fields = ['phone', 'role']
 
 
-class SendOTPSerializer(serializers.Serializer):
+class SendOTPSerializer(ModelSerializer):
     phone = serializers.CharField(max_length=11)
 
-class VerifyOTPSerializer(serializers.Serializer):
+class VerifyOTPSerializer(ModelSerializer):
     phone = serializers.CharField(max_length=11)
     code = serializers.CharField(max_length=6)
+
+class LoginSerializer(ModelSerializer):
+    phone = serializers.CharField()
+    password = serializers.CharField()
+
+class SetPasswordSerializer(ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=6)
+    confirm_password = serializers.CharField(write_only=True, min_length=6)
+
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return data
+
+    def save(self, user):
+        user.set_password(self.validated_data['password'])
+        user.save()
+        return user
