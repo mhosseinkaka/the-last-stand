@@ -3,7 +3,7 @@ from bootcamp.models import Bootcamp
 from bootcamp.serializers import BootcampSerializer, BootcampViewSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from bootcamp.permissions import *
-from user.permissions import IsSuperUser
+from user.permissions import IsSuperUser, IsSupportUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 # Create your views here.
