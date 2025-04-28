@@ -17,7 +17,6 @@ from kavenegar import *
 from django.contrib.auth.models import Group
 from sms_ir import *
 import http.client
-import os
 
 
 
@@ -79,7 +78,7 @@ class SendOTPView(APIView):
                                 "mobiles": [phone],      
                                 })
             headers = {
-                'X-API-KEY': os.environ.get('API-key'),
+                'X-API-KEY': '...',
                 'Content-Type': 'application/json'}
             conn.request("POST", "/v1/send/bulk", payload, headers)
             res = conn.getresponse()
