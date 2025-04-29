@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField
+from rest_framework.serializers import ModelSerializer, StringRelatedField, Serializer
 from user.models import User
 from rest_framework import serializers
 
@@ -29,18 +29,18 @@ class UserListSerializer(ModelSerializer):
         read_only_fields = ['phone', 'role']
 
 
-class SendOTPSerializer(ModelSerializer):
+class SendOTPSerializer(Serializer):
     phone = serializers.CharField(max_length=11)
 
-class VerifyOTPSerializer(ModelSerializer):
+class VerifyOTPSerializer(Serializer):
     phone = serializers.CharField(max_length=11)
     code = serializers.CharField(max_length=6)
 
-class LoginSerializer(ModelSerializer):
+class LoginSerializer(Serializer):
     phone = serializers.CharField()
     password = serializers.CharField()
 
-class SetPasswordSerializer(ModelSerializer):
+class SetPasswordSerializer(Serializer):
     password = serializers.CharField(write_only=True, min_length=6)
     confirm_password = serializers.CharField(write_only=True, min_length=6)
 

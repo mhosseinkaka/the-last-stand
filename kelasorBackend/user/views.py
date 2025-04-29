@@ -84,6 +84,9 @@ class SendOTPView(APIView):
             res = conn.getresponse()
             data = res.read()
             print(data.decode("utf-8"))
+            # api = KavenegarAPI('...')
+            # params = { 'sender' : '2000660110', 'receptor': phone, 'message' :f"کد تایید شما: {code}" }
+            # api.sms_send(params)
         except (APIException, HTTPException) as e:
             print("sms.ir error:", e)
             return Response({"detail": "ارسال پیامک با مشکل مواجه شد."}, status=400)
