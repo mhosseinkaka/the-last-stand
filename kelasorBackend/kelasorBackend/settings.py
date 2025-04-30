@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django_filters',
     'user',
     'bootcamp',
-    'register'
+    'register',
+    'payment',
 ]
 
 MIDDLEWARE = [
