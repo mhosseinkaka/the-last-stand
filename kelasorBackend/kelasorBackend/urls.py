@@ -24,6 +24,7 @@ urlpatterns = [
     path('bootcamp/', include('bootcamp.urls')),
     path('register/', include('register.urls')),
     path('payment/', include('payment.urls')),
+    path('ticket/', include('ticket.urls')),
     path('login', TokenObtainPairView.as_view()),
     path('refresh', TokenRefreshView.as_view()),
     path('verify', TokenVerifyView.as_view())

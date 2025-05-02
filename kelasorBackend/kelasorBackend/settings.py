@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'bootcamp',
     'register',
     'payment',
+    'ticket',
 ]
 
 MIDDLEWARE = [
