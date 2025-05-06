@@ -21,6 +21,9 @@ class RegisterBootcampView(CreateAPIView):
             bootcamp = Bootcamp.objects.get(id=bootcamp_id)
         except Bootcamp.DoesNotExist:
             return Response({"detail": "بوتکمپ مورد نظر یافت نشد."}, status=status.HTTP_404_NOT_FOUND)
+        
+        if bootcamp.status != 'open':
+            return Response({"detail": "ثبت‌نام در این بوتکمپ امکان‌پذیر نیست."}, status=status.HTTP_400_BAD_REQUEST)
 
         if bootcamp.student_count >= bootcamp.capacity:
             return Response({"detail": "ظرفیت بوتکمپ تکمیل شده است."}, status=status.HTTP_400_BAD_REQUEST)
