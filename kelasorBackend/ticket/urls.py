@@ -1,5 +1,5 @@
 from django.urls import path
-from ticket.views import CreateTicketView, MyTicketsView, AllTicketsView, ReplyTicketView, CloseTicketView
+from ticket.views import CreateTicketView, MyTicketsView, AllTicketsView, ReplyTicketView, CloseTicketView, AddMessageToTicketView
 
 urlpatterns = [
     path('create-ticket/', CreateTicketView.as_view(), name='ticket-create'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('all-tickets/', AllTicketsView.as_view(), name='all-tickets'),
     path('<int:ticket_id>/reply/', ReplyTicketView.as_view(), name='ticket-reply'),
     path('<int:pk>/close/', CloseTicketView.as_view(), name='ticket-close'),
+    path('<int:ticket_id>/message/', AddMessageToTicketView.as_view(), name='ticket-add-message')
 ]
