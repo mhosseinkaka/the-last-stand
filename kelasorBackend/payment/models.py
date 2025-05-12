@@ -36,3 +36,16 @@ class Installment(models.Model):
 
     def __str__(self):
         return f"قسط {self.id} - {self.payment.user.phone}"
+    
+
+class Invoice(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bootcamp = models.ForeignKey(Bootcamp, on_delete=models.SET_NULL, null=True, blank=True)
+    amount = models.PositiveIntegerField()
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='issued_invoices')
+    created_at = models.DateTimeField(auto_now_add=True)
+    paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"فاکتور {self.user.phone} - مبلغ {self.amount}"

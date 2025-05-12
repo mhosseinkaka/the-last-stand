@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from user.permissions import IsSupportUser
 from rest_framework.response import Response    
 from payment.models import Payment, Installment
-from payment.serializers import PaymentSerializer, InstallmentSerializer
+from payment.serializers import PaymentSerializer, InstallmentSerializer, PaymentListSerializer, InvoiceSerializer
 from bootcamp.models import Bootcamp
 from datetime import timedelta, date, timezone
 # Create your views here.
@@ -50,7 +50,7 @@ class CreatePaymentView(CreateAPIView):
 
 
 class ConfirmInstallmentPaymentView(UpdateAPIView):
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
     queryset = Installment.objects.all()
     serializer_class = InstallmentSerializer
     
@@ -76,7 +76,7 @@ class ConfirmInstallmentPaymentView(UpdateAPIView):
     
 
 class PaymentSearchListView(ListAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAdminUser]
     queryset = Payment.objects.all().order_by('-created_at')
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -84,3 +84,19 @@ class PaymentSearchListView(ListAPIView):
     search_fields = ['user_phone', 'bootcamp_title']
     ordering_fields = ['created_at', 'amount'] 
     ordering = ['-created_at']
+
+
+class MyPaymentsView(ListAPIView):
+    serializer_class = PaymentListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Payment.objects.filter(user=self.request.user).order_by('-created_at')
+    
+
+class CreateInvoiceView(CreateAPIView):
+    serializer_class = InvoiceSerializer
+    permission_classes = [IsSupportUser]
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
