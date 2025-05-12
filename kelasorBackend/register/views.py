@@ -37,13 +37,13 @@ class RegisterBootcampView(CreateAPIView):
 
 
 class RegistrationListView(ListAPIView):
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
     queryset = Registration.objects.filter(status='pending')
     serializer_class = RegisterSerializer
     
 
 class RegistrationStatusUpdateView(UpdateAPIView):
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
     queryset = Registration.objects.all()
     serializer_class = RegisterStatusUpdateSerializer
     

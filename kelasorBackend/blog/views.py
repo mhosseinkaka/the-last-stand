@@ -29,7 +29,7 @@ class BlogPostDetailView(RetrieveAPIView):
 class BlogPostCreateView(CreateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -38,18 +38,18 @@ class BlogPostCreateView(CreateAPIView):
 class BlogPostUpdateView(UpdateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
 
 
 class BlogPostDeleteView(DestroyAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
 
 
 class BlogImageUploadView(CreateAPIView):
     serializer_class = BlogImageSerializer
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
 
     def perform_create(self, serializer):
         # اجازه بده نویسنده فقط روی پست خودش عکس بزاره

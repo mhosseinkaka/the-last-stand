@@ -23,7 +23,7 @@ import http.client
 # Create your views here.
 
 class UserListView(ListAPIView):
-    permission_classes = [IsSuperUser, IsAuthenticated]
+    permission_classes = [IsSuperUser]
     queryset = User.objects.all()
     serializer_class = UserListSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -31,7 +31,7 @@ class UserListView(ListAPIView):
     search_fields = ['role']
     
 class CreateSupportUserView(CreateAPIView):
-    permission_classes = [IsAuthenticated, IsSuperUser]
+    permission_classes = [IsSuperUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -49,7 +49,7 @@ class CreateSupportUserView(CreateAPIView):
         user.save()
 
 class CreateNormalUserView(CreateAPIView):
-    permission_classes = [IsAuthenticated, IsSupportUser]
+    permission_classes = [IsSupportUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

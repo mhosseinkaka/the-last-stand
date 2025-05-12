@@ -9,19 +9,19 @@ from rest_framework import filters
 # Create your views here.
 
 class BootcampCreateView(CreateAPIView):
-    permission_classes = [IsAuthenticated, IsSuperUser]
+    permission_classes = [IsSuperUser]
     queryset = Bootcamp.objects.all()
     serializer_class = BootcampSerializer
     
 
 class BootcampRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsSuperUser]
+    permission_classes = [IsSuperUser]
     queryset = Bootcamp.objects.all()
     serializer_class = BootcampSerializer
     
 
 class BootcampAdminListView(ListAPIView):
-    permission_classes = [IsAuthenticated, IsSuperUser]
+    permission_classes = [IsSuperUser]
     queryset = Bootcamp.objects.all()
     serializer_class = BootcampSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
