@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'register',
     'payment',
     'ticket',
-    'blog'
+    'blog',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
