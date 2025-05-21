@@ -8,7 +8,7 @@ from user.serializers import UserSerializer, UserProfileSerializer, UserListSeri
 from django.contrib.auth import authenticate
 from user.permissions import IsSuperUser, IsSupportUser
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status
+from rest_framework import filters, status, request
 import random
 from django.utils import timezone
 from datetime import timedelta
@@ -17,6 +17,7 @@ from kavenegar import *
 from django.contrib.auth.models import Group
 from sms_ir import *
 import http.client
+
 
 
 
@@ -37,10 +38,11 @@ class CreateSupportUserView(CreateAPIView):
 
     def perform_create(self, serializer):
         user = serializer.save()
+        group_name = request.data.get('group_name')
 
         try:
-            support_group = Group.objects.get(name='Supports')
-            user.groups.add(support_group)
+            group = Group.objects.get(name=group_name)
+            user.groups.add(group)
         except Group.DoesNotExist:
             raise Exception("گروه Supports پیدا نشد. لطفاً گروه را ایجاد کنید.")
 
@@ -49,7 +51,7 @@ class CreateSupportUserView(CreateAPIView):
         user.save()
 
 class CreateNormalUserView(CreateAPIView):
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
