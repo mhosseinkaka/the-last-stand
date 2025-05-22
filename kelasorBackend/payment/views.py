@@ -3,7 +3,7 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView
 from rest_framework import status, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from user.permissions import IsSupportUser
+from user.permissions import IsSupportUser, IsSuperUser
 from rest_framework.response import Response    
 from payment.models import Payment, Installment
 from payment.serializers import PaymentSerializer, InstallmentSerializer, PaymentListSerializer, InvoiceSerializer
@@ -50,7 +50,7 @@ class CreatePaymentView(CreateAPIView):
 
 
 class ConfirmInstallmentPaymentView(UpdateAPIView):
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
     queryset = Installment.objects.all()
     serializer_class = InstallmentSerializer
     
@@ -76,7 +76,7 @@ class ConfirmInstallmentPaymentView(UpdateAPIView):
     
 
 class PaymentSearchListView(ListAPIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsSuperUser]
     queryset = Payment.objects.all().order_by('-created_at')
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -96,7 +96,7 @@ class MyPaymentsView(ListAPIView):
 
 class CreateInvoiceView(CreateAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)

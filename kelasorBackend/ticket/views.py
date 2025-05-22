@@ -2,7 +2,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, g
 from ticket.models import Ticket, TicketReply, TicketMessage
 from ticket.serializers import TicketSerializer, TicketReplySerializer, TicketMessageSerializer
 from rest_framework.permissions import IsAuthenticated
-from user.permissions import IsSupportUser
+from user.permissions import IsSupportUser, IsSuperUser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -41,7 +41,7 @@ class MyTicketsView(ListAPIView):
 
 #support
 class AllTicketsView(ListAPIView):
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
     queryset = Ticket.objects.all().order_by('-created_at')
     serializer_class = TicketSerializer
     
@@ -49,7 +49,7 @@ class AllTicketsView(ListAPIView):
 #support
 class ReplyTicketView(CreateAPIView):
     serializer_class = TicketReplySerializer
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
 
     def perform_create(self, serializer):
         ticket_id = self.kwargs['ticket_id']

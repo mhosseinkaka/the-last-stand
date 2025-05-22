@@ -3,7 +3,7 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, R
 from blog.models import BlogPost, BlogImage
 from blog.serializers import BlogPostSerializer, BlogImageSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from user.permissions import IsSupportUser
+from user.permissions import IsSupportUser, IsSuperUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.core.exceptions import PermissionDenied
@@ -29,7 +29,7 @@ class BlogPostDetailView(RetrieveAPIView):
 class BlogPostCreateView(CreateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -38,18 +38,18 @@ class BlogPostCreateView(CreateAPIView):
 class BlogPostUpdateView(UpdateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
 
 
 class BlogPostDeleteView(DestroyAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
 
 
 class BlogImageUploadView(CreateAPIView):
     serializer_class = BlogImageSerializer
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
 
     def perform_create(self, serializer):
         # اجازه بده نویسنده فقط روی پست خودش عکس بزاره

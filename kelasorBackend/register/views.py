@@ -1,5 +1,5 @@
 from rest_framework.permissions import IsAuthenticated
-from user.permissions import IsSupportUser
+from user.permissions import IsSupportUser, IsSuperUser
 from register.models import Registration
 from register.serializers import RegisterSerializer, RegisterStatusUpdateSerializer
 from bootcamp.models import Bootcamp
@@ -37,13 +37,13 @@ class RegisterBootcampView(CreateAPIView):
 
 
 class RegistrationListView(ListAPIView):
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
     queryset = Registration.objects.filter(status='pending')
     serializer_class = RegisterSerializer
     
 
 class RegistrationStatusUpdateView(UpdateAPIView):
-    permission_classes = [IsSupportUser]
+    permission_classes = [IsSupportUser | IsSuperUser]
     queryset = Registration.objects.all()
     serializer_class = RegisterStatusUpdateSerializer
     
